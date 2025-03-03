@@ -84,17 +84,17 @@ COMMANDS					*scratch-buffer-commands*
 
 						*:ScratchBufferOpen*
 :ScratchBufferOpen [file-extension | --no-file-ext] [open-method] [buffer-size]
-	Open a scratch buffer with a random file name.
-	
+	Open a temporary scratch buffer with a random file name.
+
 	This opens buffers by the rule
 	described in `g:scratch_buffer_tmp_file_pattern`.
-	
+
 	[file-extension] is an optional argument:
 	  - When omitted or --no-file-ext is specified:
 	    Creates a buffer without file extension and filetype
 	  - Otherwise:
 	    Uses the specified extension (e.g., 'md', 'ts') as filetype
-	
+
 	The buffer is opened as a temporary buffer.
 	The following properties:
 >
@@ -116,6 +116,14 @@ COMMANDS					*scratch-buffer-commands*
 	or doesn't resize if this is omitted.
 
 
+						*:ScratchBufferOpenFile*
+:ScratchBufferOpenFile [file-extension | --no-file-ext] [open-method] [buffer-size]
+	Similar to `:ScratchBufferOpen` but creates a normal buffer instead of
+	a temporary one. The buffer can be written and saved normally.
+
+	Uses the same arguments as `:ScratchBufferOpen`.
+
+
 						*:ScratchBufferClean*
 :ScratchBufferClean
 	Delete all scratch files and buffers that
@@ -126,7 +134,7 @@ COMMANDS					*scratch-buffer-commands*
 FUNCTIONS					*scratch-buffer-functions*
 
 						*scratch_buffer#open()*
-scratch_buffer#open([file-extension | --no-filetype][, open-method][, buffer-size])
+scratch_buffer#open([file-extension | --no-file-ext][, open-method][, buffer-size])
 	Same as `:ScratchBufferOpen`. Creates a buffer with or without
 	filetype based on the first argument:
 	  - When an empty string or`'--no-file-ext'`is specified:
@@ -134,9 +142,14 @@ scratch_buffer#open([file-extension | --no-filetype][, open-method][, buffer-siz
 	  - Otherwise:
 	    Uses the specified extension as filetype
 
+						*scratch_buffer#open_file()*
+scratch_buffer#open_file([file-extension | --no-file-ext][, open-method][, buffer-size])
+	Same as `:ScratchBufferOpenFile`. Creates a normal buffer with the same naming
+	convention as `:ScratchBufferOpen`, but without temporary buffer properties.
+
 						*scratch_buffer#clean()*
-						scratch_buffer#clean()
-						Same as `:ScratchBufferClean`.
+scratch_buffer#clean()
+	Same as `:ScratchBufferClean`.
 
 
 ==============================================================================
