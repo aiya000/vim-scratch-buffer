@@ -39,7 +39,7 @@ function! s:suite.accept_buffer_size() abort
 endfunction
 
 function! s:suite.wipes_opened_files_and_buffer() abort
-  ScratchBufferOpen md
+  ScratchBufferOpenFile md
   write
   ScratchBufferOpen md
 

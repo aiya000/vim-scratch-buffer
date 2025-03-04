@@ -65,9 +65,11 @@ function! scratch_buffer#clean() abort
     if filereadable(scratch)
       call delete(scratch)
     endif
+  endfor
 
-    if all_buffer_names->scratch_buffer#helper#contains(scratch)
-      execute ':bwipe' bufnr(scratch)
+  for scratch in all_buffer_names
+    if scratch =~# base_pattern
+      execute ':bwipe!' bufnr(scratch)
     endif
   endfor
 endfunction
