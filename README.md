@@ -8,6 +8,10 @@
 
 - - -
 
+This Vim plugin is created by **Cline (Roo Code)** and me!
+
+- - -
+
 ## :wrench: Quick Start
 
 ```vim
