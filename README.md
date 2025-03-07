@@ -2,6 +2,8 @@
 
 :rocket: **No more hassle with file paths!** The fastest way to open an instant scratch buffer.
 
+For Vim/Neovim.
+
 - - -
 
 ![](./readme/logo.jpg)
