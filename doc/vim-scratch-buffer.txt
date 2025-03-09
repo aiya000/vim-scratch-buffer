@@ -79,6 +79,27 @@ VARIABLES						*scratch-buffer-variables*
 	be opened. `ext` is the first argument of `ScratchBufferOpen`.
 	`count` is the number of currently open scratch buffers +1.
 
+*g:scratch_buffer_auto_save_file_buffer*
+	Default: `v:true`
+
+	When enabled, file buffers (not temporary buffers) will be automatically saved
+	when their content changes.
+
+*g:scratch_buffer_auto_hide_buffer*
+	Default: `v:false`
+
+	When enabled, scratch buffers will be automatically hidden when leaving their
+	window.
+
+*g:scratch_buffer_use_default_keymappings*
+	Default: `v:false`
+
+	When enabled, the following default key mappings will be set:
+>
+	nnoremap <silent> <leader>b <Cmd>ScratchBufferOpen<CR>
+	nnoremap <silent> <leader>B <Cmd>ScratchBufferOpenFile<CR>
+<
+
 ------------------------------------------------------------------------------
 COMMANDS					*scratch-buffer-commands*
 
@@ -109,7 +130,7 @@ COMMANDS					*scratch-buffer-commands*
 	Open the buffer on top if `'sp'`,
 	or open the buffer on the left if `'vsp'`.
 	Please also see `:split` and `:vsplit`.
-	Default value:`'vsp'`
+	Default value:`'sp'`
 
 	[buffer-size] is an optional argument, should be a positive number.
 	`:ScratchBufferOpen` resizes the opened buffer upon opening,
