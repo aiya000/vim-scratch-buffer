@@ -17,7 +17,7 @@ function! scratch_buffer#open_file(...) abort
 endfunction
 
 function! s:open_buffer(temp_buffer, args) abort
-  const file_ext = get(a:args, 0, '--no-file-ext')
+  const file_ext = get(a:args, 0, g:scratch_buffer_default_file_ext)
   const file_pattern = (file_ext ==# '--no-file-ext' || file_ext ==# '')
     \ ? $'{g:scratch_buffer_tmp_file_pattern}'
     \ : $'{g:scratch_buffer_tmp_file_pattern}.{file_ext}'
@@ -27,8 +27,8 @@ function! s:open_buffer(temp_buffer, args) abort
     throw 'No fresh scratch file found.'
   endif
 
-  const open_method = get(a:args, 1, 'sp')
-  const buffer_size = get(a:args, 2, v:null)
+  const open_method = get(a:args, 1, g:scratch_buffer_default_open_method)
+  const buffer_size = get(a:args, 2, g:scratch_buffer_default_buffer_size)
 
   execute 'silent' open_method file_name
 

@@ -21,6 +21,9 @@ command! -bar -nargs=* ScratchBufferOpenFile call scratch_buffer#open_file(<f-ar
 command! -bar ScratchBufferClean call scratch_buffer#clean()
 
 let g:scratch_buffer_tmp_file_pattern = get(g:, 'scratch_buffer_tmp_file_pattern', '/tmp/vim-scratch-buffer-%d')
+let g:scratch_buffer_default_file_ext = get(g:, 'scratch_buffer_default_file_ext', 'md')
+let g:scratch_buffer_default_open_method = get(g:, 'scratch_buffer_default_open_method', 'sp')
+let g:scratch_buffer_default_buffer_size = get(g:, 'scratch_buffer_default_buffer_size', 15)
 let g:scratch_buffer_auto_save_file_buffer = get(g:, 'scratch_buffer_auto_save_file_buffer', v:true)
 let g:scratch_buffer_use_default_keymappings = get(g:, 'scratch_buffer_use_default_keymappings', v:false)
 

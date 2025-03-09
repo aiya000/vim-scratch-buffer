@@ -71,16 +71,35 @@ INTERFACE				*scratch-buffer-interface*
 VARIABLES						*scratch-buffer-variables*
 
 *g:scratch_buffer_tmp_file_pattern*
-	Default: '/tmp/vim-scratch-buffer-%d'
+	Default:`'/tmp/vim-scratch-buffer-%d'`
 
-	When `ScratchBufferOpen` opens a scratch buffer, it will make a
+	When`ScratchBufferOpen`opens a scratch buffer, it will make a
 	decision based on this pattern.
-	Specifically, `printf($'/tmp/vim-scratch-buffer-%d.{ext}', count)` will
-	be opened. `ext` is the first argument of `ScratchBufferOpen`.
-	`count` is the number of currently open scratch buffers +1.
+	Specifically,`printf($'/tmp/vim-scratch-buffer-%d.{ext}', count)`
+	will be opened. `ext`is the first argument of`ScratchBufferOpen`.
+	`count`is the number of currently open scratch buffers +1.
+
+*g:scratch_buffer_default_file_ext*
+	Default:`'md'`
+
+	The default file extension to use when opening a new scratch buffer.
+	This is used when no file extension is provided as an argument.
+
+*g:scratch_buffer_default_open_method*
+	Default:`'sp'`
+
+	The default method to use when opening a new scratch buffer.
+	Can be either 'sp' for horizontal split or 'vsp' for vertical split.
+
+*g:scratch_buffer_default_buffer_size*
+	Default:`15`
+
+	The default size (height for 'sp' or width for 'vsp') of newly opened
+	scratch buffers. Set to a positive number to resize the buffer
+	upon opening.
 
 *g:scratch_buffer_auto_save_file_buffer*
-	Default: `v:true`
+	Default:`v:true`
 
 	When enabled, file buffers (not temporary buffers) will be
 	automatically saved when their content changes.
@@ -89,14 +108,12 @@ VARIABLES						*scratch-buffer-variables*
 	A dictionary that controls the auto-hiding behavior of scratch buffers.
 	Has the following keys:
 
-	.when_tmp_buffer
-		Default: `v:true`
+	.when_tmp_buffer ( Default:`v:true`)
 		When enabled,
 		temporary buffers will be automatically hidden
 		when leaving their window.
 
-	.when_file_buffer
-		Default: `v:false`
+	.when_file_buffer ( Default:`v:false`)
 		When enabled,
 		file buffers will be automatically hidden
 		when leaving their window.
