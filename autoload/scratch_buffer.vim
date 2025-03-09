@@ -27,7 +27,7 @@ function! s:open_buffer(temp_buffer, args) abort
     throw 'No fresh scratch file found.'
   endif
 
-  const open_method = get(a:args, 1, 'vsp')
+  const open_method = get(a:args, 1, 'sp')
   const buffer_size = get(a:args, 2, v:null)
 
   execute 'silent' open_method file_name
