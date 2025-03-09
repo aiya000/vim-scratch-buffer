@@ -82,14 +82,33 @@ VARIABLES						*scratch-buffer-variables*
 *g:scratch_buffer_auto_save_file_buffer*
 	Default: `v:true`
 
-	When enabled, file buffers (not temporary buffers) will be automatically saved
-	when their content changes.
+	When enabled, file buffers (not temporary buffers) will be
+	automatically saved when their content changes.
 
 *g:scratch_buffer_auto_hide_buffer*
-	Default: `v:false`
+	A dictionary that controls the auto-hiding behavior of scratch buffers.
+	Has the following keys:
 
-	When enabled, scratch buffers will be automatically hidden when leaving their
-	window.
+	.when_tmp_buffer
+		Default: `v:true`
+		When enabled,
+		temporary buffers will be automatically hidden
+		when leaving their window.
+
+	.when_file_buffer
+		Default: `v:false`
+		When enabled,
+		file buffers will be automatically hidden
+		when leaving their window.
+
+	Example:
+>
+	" Disable auto-hiding for temporary buffers
+	let g:scratch_buffer_auto_hide_buffer = #{
+	  \ when_tmp_buffer: v:false,
+	  \ when_file_buffer: v:false,
+	\ }
+<
 
 *g:scratch_buffer_use_default_keymappings*
 	Default: `v:false`
