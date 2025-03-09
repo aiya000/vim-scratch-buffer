@@ -22,28 +22,19 @@ command! -bar ScratchBufferClean call scratch_buffer#clean()
 
 let g:scratch_buffer_tmp_file_pattern = get(g:, 'scratch_buffer_tmp_file_pattern', '/tmp/vim-scratch-buffer-%d')
 let g:scratch_buffer_auto_save_file_buffer = get(g:, 'scratch_buffer_auto_save_file_buffer', v:true)
-let g:scratch_buffer_auto_hide_buffer = get(g:, 'scratch_buffer_auto_hide_buffer', v:false)
 let g:scratch_buffer_use_default_keymappings = get(g:, 'scratch_buffer_use_default_keymappings', v:false)
 
-function! s:is_scratch_bufer() abort
-  return expand('%:p') =~# substitute(g:scratch_buffer_tmp_file_pattern, '%d', '*', '')
-endfunction
+let g:scratch_buffer_auto_hide_buffer = get(g:, 'scratch_buffer_auto_hide_buffer', #{})
+let g:scratch_buffer_auto_hide_buffer.when_tmp_buffer = get(g:scratch_buffer_auto_hide_buffer, 'when_tmp_buffer', v:true)
+let g:scratch_buffer_auto_hide_buffer.when_file_buffer = get(g:scratch_buffer_auto_hide_buffer, 'when_file_buffer', v:false)
 
 augroup VimScratchBuffer
   autocmd!
-
-  autocmd TextChanged *
-    \ if g:scratch_buffer_auto_save_file_buffer && (&buftype !=# 'nofile') && s:is_scratch_bufer()
-      \| silent! write
-    \| endif
-
-  autocmd WinLeave *
-    \ if g:scratch_buffer_auto_hide_buffer && s:is_scratch_bufer()
-      \| quit
-    \| endif
+  autocmd TextChanged * call scratch_buffer#autocmd#save_file_buffer()
+  autocmd WinLeave * call scratch_buffer#autocmd#hide_buffer()
 augroup END
 
 if g:scratch_buffer_use_default_keymappings
-  nnoremap <silent> <leader>b :ScratchBufferOpen<CR>
-  nnoremap <silent> <leader>B :ScratchBufferOpenFile<CR>
+  nnoremap <silent> <leader>b <Cmd>ScratchBufferOpen<CR>
+  nnoremap <silent> <leader>B <Cmd>ScratchBufferOpenFile<CR>
 endif
