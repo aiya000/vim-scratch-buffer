@@ -40,4 +40,6 @@ augroup END
 if g:scratch_buffer_use_default_keymappings
   nnoremap <silent> <leader>b <Cmd>ScratchBufferOpen<CR>
   nnoremap <silent> <leader>B <Cmd>ScratchBufferOpenFile<CR>
+  nnoremap <leader><leader>b :<C-u>ScratchBufferOpen<Space>
+  nnoremap <leader><leader>B :<C-u>ScratchBufferOpenFile<Space>
 endif
