@@ -97,6 +97,7 @@ VARIABLES						*scratch-buffer-variables*
 	The default size (height for 'sp' or width for 'vsp') of newly opened
 	scratch buffers. Set to a positive number to resize the buffer
 	upon opening.
+	Also if this is specified as `v:null`, resizing is not performed.
 
 *g:scratch_buffer_auto_save_file_buffer*
 	Default:`v:true`
