@@ -79,3 +79,47 @@ Compared to scratch.vim, vim-scratch-buffer provides these additional features:
 " Delete all scratch files and buffers
 :ScratchBufferClean
 ```
+
+## :keyboard: Default Keymappings
+
+By default (`g:scratch_buffer_use_default_keymappings` is enabled), the following keymappings are available:
+
+```vim
+nnoremap <silent> <leader>b <Cmd>ScratchBufferOpen<CR>
+nnoremap <silent> <leader>B <Cmd>ScratchBufferOpenFile<CR>
+nnoremap <leader><leader>b :<C-u>ScratchBufferOpen<Space>
+nnoremap <leader><leader>B :<C-u>ScratchBufferOpenFile<Space>
+```
+
+You can disable these default keymappings by setting:
+
+```vim
+let g:scratch_buffer_use_default_keymappings = v:false
+```
+
+## :sparkles: scratch.vim Compatibility
+
+To make the plugin behave like scratch.vim, you can enable automatic buffer hiding!
+When enabled, scratch buffers will automatically hide when you leave the window.
+You can configure this behavior separately for temporary buffers and file buffers.
+
+Enable both types of buffer hiding with:
+
+```vim
+let g:scratch_buffer_auto_hide_buffer = #{
+  \ when_tmp_buffer: v:true,
+  \ when_file_buffer: v:true,
+\ }
+```
+
+Or enable hiding for only temporary buffers:
+
+```vim
+let g:scratch_buffer_auto_hide_buffer = #{ when_tmp_buffer: v:true }
+```
+
+Or enable hiding for only file buffers:
+
+```vim
+let g:scratch_buffer_auto_hide_buffer = #{ when_file_buffer: v:true }
+```
