@@ -108,7 +108,7 @@ VARIABLES						*scratch-buffer-variables*
 	A dictionary that controls the auto-hiding behavior of scratch buffers.
 	Has the following keys:
 
-	.when_tmp_buffer ( Default:`v:true`)
+	.when_tmp_buffer ( Default:`v:false`)
 		When enabled,
 		temporary buffers will be automatically hidden
 		when leaving their window.
