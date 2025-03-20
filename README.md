@@ -14,31 +14,28 @@ This Vim plugin is created by **Cline (Roo Code)** and me!
 
 - - -
 
+## Table of Contents
+
+- [:sparkles: scratch-buffer.vim :sparkles:](#sparkles-scratch-buffervim-sparkles)
+  - [:wrench: Quick Start](#wrench-quick-start)
+  - [:fire: Why scratch-buffer.vim?](#fire-why-scratch-buffervim)
+  - [:zap: Supercharge with vim-quickrun!](#zap-supercharge-with-vim-quickrun)
+  - [:balance_scale: Comparison with scratch.vim](#balance_scale-comparison-with-scratchvim)
+    - [:gear: Detailed Usage](#gear-detailed-usage)
+  - [:keyboard: Default Keymappings](#keyboard-default-keymappings)
+  - [:sparkles: scratch.vim Compatibility](#sparkles-scratchvim-compatibility)
+
 ## :wrench: Quick Start
 
 ```vim
-" Open a new scratch buffer without file extension and filetype
-:ScratchBufferOpen
-:ScratchBufferOpen --no-file-ext
+:ScratchBufferOpen  " Open a temporary buffer using default options
+:ScratchBufferOpen md sp 5  " Open a temporary Markdown buffer with :sp and height 5
+:ScratchBufferOpenFile ts vsp 100  " Open a persistent TypeScript buffer with :vsp and width 100
+:ScratchBufferOpenNext  " Open next temporary buffer
+:ScratchBufferOpenFileNext  " Open next persistent buffer
 ```
 
-```vim
-" Open a new scratch buffer with Markdown filetype
-:ScratchBufferOpen md
-```
-
-```vim
-" Open a small buffer at the top for quick notes
-:ScratchBufferOpen md sp 5
-:ScratchBufferOpen --no-file-ext sp 5
-```
-
-Of course, you can open other file types too!
-
-```vim
-" Open a TypeScript buffer
-:ScratchBufferOpen ts
-```
+Please see '[Detailed Usage](#gear-detailed-usage)' section for more information.
 
 ## :fire: Why scratch-buffer.vim?
 
@@ -65,15 +62,60 @@ However, vim-scratch-buffer adds more features.
 
 Compared to scratch.vim, vim-scratch-buffer provides these additional features:
 
-- Open multiple buffers with sequential numbering
+- Flexible buffer management
+    - Open multiple buffers with sequential numbering (`:ScratchBufferOpenNext`)
+    - Quick access to recently used buffers (`:ScratchBufferOpen`)
     - When you want to take notes on different topics, scratch.vim only allows one buffer
-    - See [`:ScratchBufferOpen`](https://github.com/aiya000/vim-scratch-buffer/blob/736eef08b531b91c95497917ddb97ffbc2047c73/doc/vim-scratch-buffer.txt#L86)
-- Choose between writeable buffers or temporary buffers
-    - See [`:ScratchBufferOpen`](https://github.com/aiya000/vim-scratch-buffer/blob/736eef08b531b91c95497917ddb97ffbc2047c73/doc/vim-scratch-buffer.txt#L86) and [`:ScratchBufferOpenFile`](https://github.com/aiya000/vim-scratch-buffer/blob/736eef08b531b91c95497917ddb97ffbc2047c73/doc/vim-scratch-buffer.txt#L120)
-- Specify filetype, opening method (`:split` or `:vsplit`), and buffer height (width)
-    - Filetype specification enables syntax highlighting
+    - See `:help :ScratchBufferOpen` and `:help :ScratchBufferOpenNext`
 
-## :gear: Other Features
+- Buffer type options
+    - Choose between writeable buffers or temporary buffers
+    - Automatic saving for file buffers when enabled
+    - Convert temporary buffers to persistent ones when needed
+    - See `:help :ScratchBufferOpen` and `:help :ScratchBufferOpenFile`
+
+- Customization options
+    - Specify filetype for syntax highlighting
+    - Choose opening method (`:split` or `:vsplit`)
+    - Control buffer height/width
+    - Configurable auto-hiding behavior
+
+### :gear: Detailed Usage
+
+```vim
+" Basic Usage
+
+" Open a temporary buffer using default settings
+:ScratchBufferOpen
+
+" Same as :ScratchBufferOpen but opens a writable persistent buffer
+:ScratchBufferOpenFile
+```
+
+```vim
+" Open a new scratch buffer with a specific filetype
+
+" Example: Markdown
+:ScratchBufferOpen md
+
+" Example: TypeScript
+:ScratchBufferOpen ts
+
+" Example: No filetype
+:ScratchBufferOpen --no-file-ext
+```
+
+```vim
+" Open multiple scratch buffers
+:ScratchBufferOpen md      " Opens most recently used buffer
+:ScratchBufferOpenNext md  " Always creates a new buffer
+```
+
+```vim
+" Open a small buffer at the top for quick notes
+:ScratchBufferOpen md sp 5
+:ScratchBufferOpen --no-file-ext sp 5
+```
 
 ```vim
 " Delete all scratch files and buffers
@@ -82,19 +124,32 @@ Compared to scratch.vim, vim-scratch-buffer provides these additional features:
 
 ## :keyboard: Default Keymappings
 
-By default (`g:scratch_buffer_use_default_keymappings` is enabled), the following keymappings are available:
+When `g:scratch_buffer_use_default_keymappings` is enabled (default: `v:false`), the following keymappings are available:
 
 ```vim
+" Quick open commands (execute immediately)
 nnoremap <silent> <leader>b <Cmd>ScratchBufferOpen<CR>
 nnoremap <silent> <leader>B <Cmd>ScratchBufferOpenFile<CR>
+
+" Interactive commands (allows adding arguments)
 nnoremap <leader><leader>b :<C-u>ScratchBufferOpen<Space>
 nnoremap <leader><leader>B :<C-u>ScratchBufferOpenFile<Space>
 ```
 
-You can disable these default keymappings by setting:
+The quick open commands create buffers with default settings, while the interactive commands let you specify file extension, open method, and buffer size.
+
+You can customize these mappings by disabling the defaults:
 
 ```vim
 let g:scratch_buffer_use_default_keymappings = v:false
+```
+
+And then defining your own:
+
+```vim
+" Example custom mappings
+nnoremap <silent> <leader>s <Cmd>ScratchBufferOpen<CR>
+nnoremap <silent> <leader>S <Cmd>ScratchBufferOpenFile<CR>
 ```
 
 ## :sparkles: scratch.vim Compatibility
