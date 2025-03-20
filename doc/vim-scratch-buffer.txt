@@ -34,7 +34,8 @@ to execute code instantly!
 	" ...and run it immediately!
 	:QuickRun
 <
-Please see the `scratch-buffer-usage` section for usage of `:ScratchBufferOpen`.
+Please see the `scratch-buffer-usage` section
+for usage of `:ScratchBufferOpen`.
 
 Newer Version:
 https://github.com/aiya000/vim-scratch-buffer
@@ -71,7 +72,7 @@ INTERFACE				*scratch-buffer-interface*
 VARIABLES						*scratch-buffer-variables*
 
 *g:scratch_buffer_tmp_file_pattern*
-	Default:`'/tmp/vim-scratch-buffer-%d'`
+	Default: `'/tmp/vim-scratch-buffer-%d'`
 
 	When`ScratchBufferOpen`opens a scratch buffer, it will make a
 	decision based on this pattern.
@@ -80,19 +81,19 @@ VARIABLES						*scratch-buffer-variables*
 	`count`is the number of currently open scratch buffers +1.
 
 *g:scratch_buffer_default_file_ext*
-	Default:`'md'`
+	Default: `'md'`
 
 	The default file extension to use when opening a new scratch buffer.
 	This is used when no file extension is provided as an argument.
 
 *g:scratch_buffer_default_open_method*
-	Default:`'sp'`
+	Default: `'sp'`
 
 	The default method to use when opening a new scratch buffer.
 	Can be either 'sp' for horizontal split or 'vsp' for vertical split.
 
 *g:scratch_buffer_default_buffer_size*
-	Default:`15`
+	Default: `15`
 
 	The default size (height for 'sp' or width for 'vsp') of newly opened
 	scratch buffers. Set to a positive number to resize the buffer
@@ -100,7 +101,7 @@ VARIABLES						*scratch-buffer-variables*
 	Also if this is specified as `v:null`, resizing is not performed.
 
 *g:scratch_buffer_auto_save_file_buffer*
-	Default:`v:true`
+	Default: `v:true`
 
 	When enabled, file buffers (not temporary buffers) will be
 	automatically saved when their content changes.
@@ -109,12 +110,12 @@ VARIABLES						*scratch-buffer-variables*
 	A dictionary that controls the auto-hiding behavior of scratch buffers.
 	Has the following keys:
 
-	.when_tmp_buffer ( Default:`v:false`)
+	.when_tmp_buffer ( Default: `v:false` )
 		When enabled,
 		temporary buffers will be automatically hidden
 		when leaving their window.
 
-	.when_file_buffer ( Default:`v:false`)
+	.when_file_buffer ( Default: `v:false` )
 		When enabled,
 		file buffers will be automatically hidden
 		when leaving their window.
@@ -167,7 +168,7 @@ COMMANDS					*scratch-buffer-commands*
 	Open the buffer on top if `'sp'`,
 	or open the buffer on the left if `'vsp'`.
 	Please also see `:split` and `:vsplit`.
-	Default value:`'sp'`
+	Default value: `'sp'`
 
 	[buffer-size] is an optional argument, should be a positive number.
 	`:ScratchBufferOpen` resizes the opened buffer upon opening,
@@ -175,7 +176,7 @@ COMMANDS					*scratch-buffer-commands*
 
 
 						*:ScratchBufferOpenFile*
-:ScratchBufferOpenFile [file-extension | --no-file-ext] [open-method] [buffer-size]
+:ScratchBufferOpenFile [file-extension or --no-file-ext] [open-method] [buffer-size]
 	Similar to `:ScratchBufferOpen` but creates a normal buffer instead of
 	a temporary one. The buffer can be written and saved normally.
 
@@ -195,7 +196,7 @@ FUNCTIONS					*scratch-buffer-functions*
 scratch_buffer#open([file-extension | --no-file-ext][, open-method][, buffer-size])
 	Same as `:ScratchBufferOpen`. Creates a buffer with or without
 	filetype based on the first argument:
-	  - When an empty string or`'--no-file-ext'`is specified:
+	  - When an empty string or `'--no-file-ext'` is specified:
 	    Creates a buffer without file extension and filetype
 	  - Otherwise:
 	    Uses the specified extension as filetype
@@ -213,7 +214,7 @@ scratch_buffer#clean()
 ==============================================================================
 CHANGELOG					*scratch-buffer-changelog*
 
-Please see https://github.com/aiya000/vim-scratch-buffer/commits/main
+See https://github.com/aiya000/vim-scratch-buffer/commits/main
 
 
 ==============================================================================
