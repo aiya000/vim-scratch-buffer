@@ -26,6 +26,15 @@ function! s:suite.before_each() abort
   ScratchBufferClean
 endfunction
 
+function! s:suite.after() abort
+  call themis#log('')
+  " Clean all created files
+  for file in glob(g:scratch_buffer_tmp_file_pattern[:-3] .. '*')->split("\n")
+    call themis#log($'Removing file: {file}')
+    call system($'rm "{file}"')
+  endfor
+endfunction
+
 function! s:suite.can_make_buffer() abort
   ScratchBufferOpen md
 
