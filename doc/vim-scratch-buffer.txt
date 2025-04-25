@@ -218,11 +218,11 @@ COMMANDS					*scratch-buffer-commands*
 FUNCTIONS					*scratch-buffer-functions*
 
 						*scratch_buffer#open()*
-scratch_buffer#open(opening_next_fresh_buffer[, file-extension | --no-file-ext][, open-method][, buffer-size])
+scratch_buffer#open(opening-next-fresh-buffer[, file-extension | --no-file-ext][, open-method][, buffer-size])
 	Function version of `:ScratchBufferOpen` and `:ScratchBufferOpenNext`.
 
 	Parameters:
-		opening_next_fresh_buffer:
+		opening-next-fresh-buffer:
 			Whether to create a new buffer (v:true) or
 			open the most recently used buffer (v:false)
 		file-extension:
@@ -236,11 +236,11 @@ scratch_buffer#open(opening_next_fresh_buffer[, file-extension | --no-file-ext][
 	See `:help :ScratchBufferOpen` for more details.
 
 						*scratch_buffer#open_file()*
-scratch_buffer#open_file(opening_next_fresh_buffer[, file-extension | --no-file-ext][, open-method][, buffer-size])
+scratch_buffer#open_file(opening-next-fresh-buffer[, file-extension | --no-file-ext][, open-method][, buffer-size])
 	Function version of `:ScratchBufferOpenFile`.
 
 	Parameters:
-		opening_next_fresh_buffer:
+		opening-next-fresh-buffer:
 			Whether to create a new buffer (v:true)
 			or open the most recently used buffer (v:false)
 		file-extension:
