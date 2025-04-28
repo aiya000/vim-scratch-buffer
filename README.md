@@ -79,6 +79,23 @@ Compared to scratch.vim, vim-scratch-buffer provides these additional features:
     - Choose opening method (`:split` or `:vsplit`)
     - Control buffer height/width
     - Configurable auto-hiding behavior
+    - Customize buffer file locations:
+      ```vim
+      " Configure different paths for temporary and persistent buffers
+      let g:scratch_buffer_file_pattern = #{
+        \ when_tmp_buffer: '/tmp/scratch-tmp-%d',      " For :ScratchBufferOpen
+        \ when_file_buffer: expand('~/scratch/%d'),    " For :ScratchBufferOpenFile
+      \ }
+      ```
+      ```vim
+      " Or you can set only one of these options
+      " and leave the other as the default value
+      let g:scratch_buffer_file_pattern = #{
+        \ when_file_buffer: expand('~/tmp/scratch-%d'),
+      \ }
+      " This is useful if you want to keep a file buffer directory
+      " (`~/tmp` in the above case) with `.prettier`, etc.
+      ```
 
 ### :gear: Detailed Usage
 
