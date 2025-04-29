@@ -75,10 +75,10 @@ Compared to scratch.vim, vim-scratch-buffer provides these additional features:
     - See `:help :ScratchBufferOpen` and `:help :ScratchBufferOpenFile`
 
 - Customization options
-    - Specify filetype for syntax highlighting
+    - Specify filetype for syntax highlighting, for `:QuickRun`, and for etc
     - Choose opening method (`:split` or `:vsplit`)
     - Control buffer height/width
-    - Configurable auto-hiding behavior
+    - Configurable auto-hiding behavior: [scratch.vim compatibility](#sparkles-scratchvim-compatibility)
     - Customize buffer file locations:
       ```vim
       " Configure different paths for temporary and persistent buffers
@@ -86,16 +86,11 @@ Compared to scratch.vim, vim-scratch-buffer provides these additional features:
         \ when_tmp_buffer: '/tmp/scratch-tmp-%d',      " For :ScratchBufferOpen
         \ when_file_buffer: expand('~/scratch/%d'),    " For :ScratchBufferOpenFile
       \ }
-      ```
-      ```vim
-      " Or you can set only one of these options
-      " and leave the other as the default value
-      let g:scratch_buffer_file_pattern = #{
-        \ when_file_buffer: expand('~/tmp/scratch-%d'),
-      \ }
       " This is useful if you want to keep a file buffer directory
       " (`~/tmp` in the above case) with `.prettier`, etc.
       ```
+
+Please also see [doc/vim-scratch-buffer.txt](./doc/vim-scratch-buffer.txt) for other functions.
 
 ### :gear: Detailed Usage
 
@@ -139,6 +134,8 @@ Compared to scratch.vim, vim-scratch-buffer provides these additional features:
 :ScratchBufferClean
 ```
 
+Please also see [doc/vim-scratch-buffer.txt](./doc/vim-scratch-buffer.txt) for other usage.
+
 ## :keyboard: Default Keymappings
 
 When `g:scratch_buffer_use_default_keymappings` is enabled (default: `v:false`), the following keymappings are available:
@@ -169,7 +166,7 @@ nnoremap <silent> <leader>s <Cmd>ScratchBufferOpen<CR>
 nnoremap <silent> <leader>S <Cmd>ScratchBufferOpenFile<CR>
 ```
 
-## :sparkles: scratch.vim Compatibility
+## :sparkles: scratch.vim compatibility
 
 To make the plugin behave like scratch.vim, you can enable automatic buffer hiding!
 When enabled, scratch buffers will automatically hide when you leave the window.
