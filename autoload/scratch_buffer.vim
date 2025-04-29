@@ -81,17 +81,22 @@ endfunction
 
 " Clean up all scratch buffers and files
 function! scratch_buffer#clean() abort
-  const files = glob(
-    \ substitute(g:scratch_buffer_file_pattern, '%d', '*', ''),
+  const persistent_files = glob(
+    \ substitute(g:scratch_buffer_file_pattern.when_file_buffer, '%d', '*', ''),
     \ v:false,
     \ v:true,
   \ )
-  for file in files
-    call delete(file)
+  for persistent_file in persistent_files
+    call delete(persistent_file)
   endfor
 
+  call s:wipe_buffers(g:scratch_buffer_file_pattern.when_tmp_buffer)
+  call s:wipe_buffers(g:scratch_buffer_file_pattern.when_file_buffer)
+endfunction
+
+function! s:wipe_buffers(file_pattern) abort
   const scratch_prefix = '^' .. substitute(
-    \ g:scratch_buffer_file_pattern,
+    \ a:file_pattern,
     \ '%d',
     \ '',
     \ '',
