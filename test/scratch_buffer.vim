@@ -41,14 +41,14 @@ function! s:suite.after_each() abort
   endfor
 endfunction
 
-function! s:suite.scratch_buffer_open_shoud_can_make_buffer() abort
+function! s:suite.ScratchBufferOpen_shoud_can_make_buffer() abort
   ScratchBufferOpen
   const file_name = expand('%:p')
   const expected = printf(g:scratch_buffer_file_pattern.when_tmp_buffer, 0) .. '.md'
   call s:expect(file_name).to_equal(expected)
 endfunction
 
-function! s:suite.scratch_buffer_open_next_can_make_multiple_buffer() abort
+function! s:suite.ScratchBufferOpenNext_can_make_multiple_buffer() abort
   ScratchBufferOpen
   const main_file = expand('%:p')
   ScratchBufferOpenNext
@@ -56,7 +56,7 @@ function! s:suite.scratch_buffer_open_next_can_make_multiple_buffer() abort
   call s:expect(main_file).not.to_equal(next_file)
 endfunction
 
-function! s:suite.scratch_buffer_open_should_open_recent_buffer_after_scratch_buffer_open_next() abort
+function! s:suite.ScratchBufferOpen_should_open_recent_buffer_after_ScratchBufferOpenNext() abort
   ScratchBufferOpenNext
   const first_file = expand('%:p')
 
@@ -80,10 +80,12 @@ function! s:is_scratch_buffer_open_buffer_writable() abort
   return is_written
 endfunction
 
-function! s:suite.scratch_buffer_open_should_open_readonly_file() abort
+function! s:suite.ScratchBufferOpen_should_open_readonly_file() abort
   call s:expect(s:is_scratch_buffer_open_buffer_writable()).to_equal(v:false)
 endfunction
 
+" Try to :write a file opened by ScratchBufferOpenFile.
+" @returns {boolean} - the opened file is writable
 function! s:is_scratch_buffer_open_file_buffer_writable() abort
   let is_written = v:false
   try
@@ -95,11 +97,11 @@ function! s:is_scratch_buffer_open_file_buffer_writable() abort
   return is_written
 endfunction
 
-function! s:suite.scratch_buffer_open_file_should_open_writable_file() abort
+function! s:suite.ScratchBufferOpenFile_should_open_writable_file() abort
   call s:expect(s:is_scratch_buffer_open_file_buffer_writable()).to_equal(v:true)
 endfunction
 
-function! s:suite.scratch_buffer_open_file_should_make_tmp_buffer_to_file_buffer() abort
+function! s:suite.ScratchBufferOpenFile_should_make_tmp_buffer_to_file_buffer() abort
   const is_tmp_buffer_writable = s:is_scratch_buffer_open_buffer_writable()
   const first_file = expand('%:p')
   call s:expect(is_tmp_buffer_writable).to_equal(v:false)
@@ -111,7 +113,7 @@ function! s:suite.scratch_buffer_open_file_should_make_tmp_buffer_to_file_buffer
   call s:expect(first_file).to_equal(second_file)
 endfunction
 
-function! s:suite.scratch_buffer_open_should_make_file_buffer_to_tmp_buffer() abort
+function! s:suite.ScratchBufferOpen_should_make_file_buffer_to_tmp_buffer() abort
   const is_file_buffer_writable = s:is_scratch_buffer_open_file_buffer_writable()
   const first_file = expand('%:p')
   call s:expect(is_file_buffer_writable).to_equal(v:true)
@@ -123,7 +125,7 @@ function! s:suite.scratch_buffer_open_should_make_file_buffer_to_tmp_buffer() ab
   call s:expect(first_file).to_equal(second_file)
 endfunction
 
-function! s:suite.scratch_buffer_clean_should_wipe_opened_files_and_buffers() abort
+function! s:suite.ScratchBufferClean_should_wipe_opened_files_and_buffers() abort
   ScratchBufferOpenFile md
   const first_file = expand('%:p')
   write
@@ -154,21 +156,21 @@ function! s:suite.scratch_buffer_clean_should_wipe_opened_files_and_buffers() ab
   \ ).not.to_equal(-1)
 endfunction
 
-function! s:suite.scratch_buffer_should_accept_file_extension() abort
+function! s:suite.ScratchBufferOpen_should_accept_file_extension() abort
   ScratchBufferOpen md
 endfunction
 
-function! s:suite.scratch_buffer_should_accept_open_method() abort
+function! s:suite.ScratchBufferOpen_should_accept_open_method() abort
   ScratchBufferOpen md sp
   ScratchBufferOpen md vsp
 endfunction
 
-function! s:suite.scratch_buffer_should_accept_buffer_size() abort
+function! s:suite.ScratchBufferOpen_should_accept_buffer_size() abort
   ScratchBufferOpen md sp 5
   ScratchBufferOpen md vsp 50
 endfunction
 
-function! s:suite.scratch_buffer_should_use_default_values() abort
+function! s:suite.ScratchBufferOpen_should_use_default_values() abort
   let g:scratch_buffer_default_file_ext = 'ts'
   let g:scratch_buffer_default_open_method = 'vsp'
   let g:scratch_buffer_default_buffer_size = 20
@@ -184,7 +186,7 @@ function! s:suite.scratch_buffer_should_use_default_values() abort
   call s:expect(winwidth(0)).to_be_same(20)
 endfunction
 
-function! s:suite.scratch_buffer_should_support_auto_saving_file_buffer() abort
+function! s:suite.ScratchBufferOpen_should_support_auto_saving_file_buffer() abort
   let g:scratch_buffer_auto_save_file_buffer = v:true
   ScratchBufferOpenFile md
   call setline(1, 'test content')
@@ -195,7 +197,7 @@ function! s:suite.scratch_buffer_should_support_auto_saving_file_buffer() abort
   call s:expect(readfile(file_name)[0]).to_equal('test content')
 endfunction
 
-function! s:suite.scratch_buffer_should_support_auto_hiding_buffer() abort
+function! s:suite.ScratchBufferOpen_should_support_auto_hiding_buffer() abort
   let g:scratch_buffer_auto_hide_buffer = {}
 
   " Temporary buffer auto-hiding
@@ -215,7 +217,7 @@ function! s:suite.scratch_buffer_should_support_auto_hiding_buffer() abort
   call s:expect(winnr('$')).to_be_same(1)
 endfunction
 
-function! s:suite.scratch_buffer_open_should_use_when_tmp_buffer_pattern() abort
+function! s:suite.ScratchBufferOpen_should_use_when_tmp_buffer_pattern() abort
   let g:scratch_buffer_file_pattern = #{
     \ when_tmp_buffer: fnamemodify('./test/tmp/scratch-tmp-%d', ':p'),
   \ }
@@ -226,7 +228,7 @@ function! s:suite.scratch_buffer_open_should_use_when_tmp_buffer_pattern() abort
   call s:expect(file_name).to_equal(expected)
 endfunction
 
-function! s:suite.scratch_buffer_open_file_should_use_when_file_buffer_pattern() abort
+function! s:suite.ScratchBufferOpenFile_should_use_when_file_buffer_pattern() abort
   let g:scratch_buffer_file_pattern = #{
     \ when_file_buffer: fnamemodify('/test/tmp/scratch-file-%d', ':p'),
   \ }
@@ -237,7 +239,7 @@ function! s:suite.scratch_buffer_open_file_should_use_when_file_buffer_pattern()
   call s:expect(file_name).to_equal(expected)
 endfunction
 
-function! s:suite.scratch_buffer_open_next_should_create_different_buffers() abort
+function! s:suite.ScratchBufferOpenNext_should_create_different_buffers() abort
   let g:scratch_buffer_file_pattern = #{
     \ when_tmp_buffer: fnamemodify('./test/tmp/scratch-tmp-%d', ':p'),
     \ when_file_buffer: fnamemodify('/test/tmp/scratch-file-%d', ':p'),
