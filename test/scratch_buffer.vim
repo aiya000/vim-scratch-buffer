@@ -44,7 +44,7 @@ endfunction
 function! s:suite.scratch_buffer_open_shoud_can_make_buffer() abort
   ScratchBufferOpen
   const file_name = expand('%:p')
-  const expected = printf(g:scratch_buffer_tmp_file_pattern, 0) .. '.md'
+  const expected = printf(g:scratch_buffer_file_pattern.when_tmp_buffer, 0) .. '.md'
   call s:expect(file_name).to_equal(expected)
 endfunction
 
@@ -179,7 +179,7 @@ function! s:suite.scratch_buffer_should_use_default_values() abort
   ScratchBufferOpen
 
   const file_name = expand('%:p')
-  const expected = printf(g:scratch_buffer_tmp_file_pattern, 0) .. '.ts'
+  const expected = printf(g:scratch_buffer_file_pattern.when_tmp_buffer, 0) .. '.ts'
   call s:expect(file_name).to_equal(expected)
   call s:expect(winwidth(0)).to_be_same(20)
 endfunction
