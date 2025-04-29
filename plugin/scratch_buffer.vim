@@ -57,21 +57,7 @@ let g:scratch_buffer_auto_hide_buffer = get(g:, 'scratch_buffer_auto_hide_buffer
 let g:scratch_buffer_auto_hide_buffer.when_tmp_buffer = get(g:scratch_buffer_auto_hide_buffer, 'when_tmp_buffer', v:false)
 let g:scratch_buffer_auto_hide_buffer.when_file_buffer = get(g:scratch_buffer_auto_hide_buffer, 'when_file_buffer', v:false)
 
-augroup VimScratchBuffer
-  autocmd!
-
-  execute
-    \ 'autocmd'
-    \ 'TextChanged'
-    \ substitute(g:scratch_buffer_file_pattern.when_file_buffer, '%d', '*', '')
-    \ 'call scratch_buffer#autocmd#save_file_buffer_if_enabled()'
-
-  execute
-    \ 'autocmd'
-    \ 'WinLeave'
-    \ substitute(g:scratch_buffer_file_pattern.when_tmp_buffer, '%d', '*', '')
-    \ 'call scratch_buffer#autocmd#hide_buffer_if_enabled()'
-augroup END
+call scratch_buffer#initialize_augroup()
 
 if g:scratch_buffer_use_default_keymappings
   nnoremap <silent> <leader>b <Cmd>ScratchBufferOpen<CR>

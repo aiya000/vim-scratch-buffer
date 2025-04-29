@@ -1,9 +1,6 @@
-scriptencoding utf-8
-scriptversion 3
-
 function! scratch_buffer#autocmd#save_file_buffer_if_enabled() abort
   if g:scratch_buffer_auto_save_file_buffer && (&buftype !=# 'nofile')
-    silent! write
+    silent write
   endif
 endfunction
 

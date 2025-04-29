@@ -1,6 +1,3 @@
-scriptencoding utf-8
-scriptversion 3
-
 " Params:
 " - (first argument) {string | undefined} (Optional)
 "     - File extension without '.', e.g., 'md', 'ts', or 'sh'
@@ -24,10 +21,34 @@ function! scratch_buffer#open_file(opening_next_fresh_buffer, ...) abort
   \ })
 endfunction
 
+" Initialize augroup in case options were updated
+function! scratch_buffer#initialize_augroup() abort
+  augroup VimScratchBuffer
+    autocmd!
+    execute
+      \ 'autocmd'
+      \ 'TextChanged'
+      \ substitute(g:scratch_buffer_file_pattern.when_file_buffer, '%d', '*', '')
+      \ 'call scratch_buffer#autocmd#save_file_buffer_if_enabled()'
+    execute
+      \ 'autocmd'
+      \ 'WinLeave'
+      \ substitute(g:scratch_buffer_file_pattern.when_tmp_buffer, '%d', '*', '')
+      \ 'call scratch_buffer#autocmd#hide_buffer_if_enabled()'
+    execute
+      \ 'autocmd'
+      \ 'WinLeave'
+      \ substitute(g:scratch_buffer_file_pattern.when_file_buffer, '%d', '*', '')
+      \ 'call scratch_buffer#autocmd#hide_buffer_if_enabled()'
+  augroup END
+endfunction
+
 function! s:open_buffer(options) abort
   const args = a:options.args
   const opening_as_tmp_buffer = a:options.opening_as_tmp_buffer
   const opening_next_fresh_buffer = a:options.opening_next_fresh_buffer
+
+  call scratch_buffer#initialize_augroup()
 
   const file_ext = get(args, 0, g:scratch_buffer_default_file_ext)
   const file_pattern = s:get_file_pattern(opening_as_tmp_buffer, file_ext)
