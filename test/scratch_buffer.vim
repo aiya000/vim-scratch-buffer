@@ -15,7 +15,10 @@ endfunction
 
 function! s:suite.before_each() abort
   " Don't waste our environment
-  let g:scratch_buffer_tmp_file_pattern = fnamemodify('./test/tmp/scratch-%d', ':p')
+  let g:scratch_buffer_file_pattern = #{
+    \ when_tmp_buffer: fnamemodify('./test/tmp/scratch-tmp-%d', ':p'),
+    \ when_file_buffer: fnamemodify('/test/tmp/scratch-file-%d', ':p'),
+  \ }
   " Restore default values
   let g:scratch_buffer_default_file_ext = g:backup_scratch_buffer_default_file_ext
   let g:scratch_buffer_default_open_method = g:backup_scratch_buffer_default_open_method
@@ -30,8 +33,11 @@ endfunction
 
 function! s:suite.after_each() abort
   " Clean all created files
-  for file in glob(g:scratch_buffer_tmp_file_pattern[:-3] .. '*', v:false, v:true)
-    call system($'rm "{file}"')
+  for file in glob(g:scratch_buffer_file_pattern.when_tmp_buffer[:-3] .. '*', v:false, v:true)
+    call delete(file)
+  endfor
+  for file in glob(g:scratch_buffer_file_pattern.when_file_buffer[:-3] .. '*', v:false, v:true)
+    call delete(file)
   endfor
 endfunction
 
