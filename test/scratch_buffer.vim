@@ -17,7 +17,7 @@ function! s:suite.before_each() abort
   " Don't waste our environment
   let g:scratch_buffer_file_pattern = #{
     \ when_tmp_buffer: fnamemodify('./test/tmp/scratch-tmp-%d', ':p'),
-    \ when_file_buffer: fnamemodify('/test/tmp/scratch-file-%d', ':p'),
+    \ when_file_buffer: fnamemodify('./test/tmp/scratch-file-%d', ':p'),
   \ }
   " Restore default values
   let g:scratch_buffer_default_file_ext = g:backup_scratch_buffer_default_file_ext
@@ -29,6 +29,10 @@ function! s:suite.before_each() abort
 
   " Clean all created scratch files and buffers
   ScratchBufferClean
+
+  " Close opened windows
+  new
+  only
 endfunction
 
 function! s:suite.after_each() abort
@@ -101,30 +105,6 @@ function! s:suite.ScratchBufferOpenFile_should_open_writable_file() abort
   call s:expect(s:is_scratch_buffer_open_file_buffer_writable()).to_equal(v:true)
 endfunction
 
-function! s:suite.ScratchBufferOpenFile_should_make_tmp_buffer_to_file_buffer() abort
-  const is_tmp_buffer_writable = s:is_scratch_buffer_open_buffer_writable()
-  const first_file = expand('%:p')
-  call s:expect(is_tmp_buffer_writable).to_equal(v:false)
-
-  const is_file_buffer_writable = s:is_scratch_buffer_open_file_buffer_writable()
-  const second_file = expand('%:p')
-  call s:expect(is_file_buffer_writable).to_equal(v:true)
-
-  call s:expect(first_file).to_equal(second_file)
-endfunction
-
-function! s:suite.ScratchBufferOpen_should_make_file_buffer_to_tmp_buffer() abort
-  const is_file_buffer_writable = s:is_scratch_buffer_open_file_buffer_writable()
-  const first_file = expand('%:p')
-  call s:expect(is_file_buffer_writable).to_equal(v:true)
-
-  const is_tmp_buffer_writable = s:is_scratch_buffer_open_buffer_writable()
-  const second_file = expand('%:p')
-  call s:expect(is_tmp_buffer_writable).to_equal(v:false)
-
-  call s:expect(first_file).to_equal(second_file)
-endfunction
-
 function! s:suite.ScratchBufferClean_should_wipe_opened_files_and_buffers() abort
   ScratchBufferOpenFile md
   const first_file = expand('%:p')
@@ -134,7 +114,7 @@ function! s:suite.ScratchBufferClean_should_wipe_opened_files_and_buffers() abor
 
   " Check the created files stil exist
   const all_buffer_names = scratch_buffer#helper#get_all_buffer_names()
-  call s:expect(filereadable(first_file)).to_equal(1)
+  call s:expect(filereadable(first_file)).to_be_same(1)
   call s:expect(
     \ all_buffer_names->scratch_buffer#helper#contains(first_file),
   \ ).not.to_equal(-1)
@@ -147,7 +127,7 @@ function! s:suite.ScratchBufferClean_should_wipe_opened_files_and_buffers() abor
 
   " Check the created files are removed
   const new_all_buffer_names = scratch_buffer#helper#get_all_buffer_names()
-  call s:expect(filereadable(first_file)).not.to_equal(1)
+  call s:expect(filereadable(first_file)).not.to_be_same(1)
   call s:expect(
     \ new_all_buffer_names->scratch_buffer#helper#contains(first_file),
   \ ).not.to_equal(-1)
@@ -193,25 +173,27 @@ function! s:suite.ScratchBufferOpen_should_support_auto_saving_file_buffer() abo
   doautocmd TextChanged
 
   const file_name = expand('%:p')
-  call s:expect(filereadable(file_name)).to_equal(1)
+  call s:expect(filereadable(file_name)).to_be_same(1)
   call s:expect(readfile(file_name)[0]).to_equal('test content')
 endfunction
 
-function! s:suite.ScratchBufferOpen_should_support_auto_hiding_buffer() abort
-  let g:scratch_buffer_auto_hide_buffer = {}
+function! s:suite.ScratchBufferOpen_should_support_auto_hiding_tmp_buffer() abort
+  let g:scratch_buffer_auto_hide_buffer = #{
+    \ when_tmp_buffer: v:true,
+    \ when_file_buffer: v:true,
+  \ }
 
-  " Temporary buffer auto-hiding
-  let g:scratch_buffer_auto_hide_buffer.when_tmp_buffer = v:true
-  let g:scratch_buffer_auto_hide_buffer.when_file_buffer = v:false
-  only
   ScratchBufferOpen md
   wincmd p  " Trigger WinLeave
   call s:expect(winnr('$')).to_be_same(1)
+endfunction
 
-  " File buffer auto-hiding
-  let g:scratch_buffer_auto_hide_buffer.when_tmp_buffer = v:false
-  let g:scratch_buffer_auto_hide_buffer.when_file_buffer = v:true
-  only
+function! s:suite.ScratchBufferOpen_should_support_auto_hiding_file_buffer() abort
+  let g:scratch_buffer_auto_hide_buffer = #{
+    \ when_tmp_buffer: v:true,
+    \ when_file_buffer: v:true,
+  \ }
+
   ScratchBufferOpenFile md
   wincmd p  " Trigger WinLeave
   call s:expect(winnr('$')).to_be_same(1)
@@ -230,7 +212,7 @@ endfunction
 
 function! s:suite.ScratchBufferOpenFile_should_use_when_file_buffer_pattern() abort
   let g:scratch_buffer_file_pattern = #{
-    \ when_file_buffer: fnamemodify('/test/tmp/scratch-file-%d', ':p'),
+    \ when_file_buffer: fnamemodify('./test/tmp/scratch-file-%d', ':p'),
   \ }
 
   ScratchBufferOpenFile
@@ -239,10 +221,10 @@ function! s:suite.ScratchBufferOpenFile_should_use_when_file_buffer_pattern() ab
   call s:expect(file_name).to_equal(expected)
 endfunction
 
-function! s:suite.ScratchBufferOpenNext_should_create_different_buffers() abort
+function! s:suite.ScratchBufferOpen_and_ScratchBufferOpenFile_should_make_different_buffers_when_options_is_different() abort
   let g:scratch_buffer_file_pattern = #{
     \ when_tmp_buffer: fnamemodify('./test/tmp/scratch-tmp-%d', ':p'),
-    \ when_file_buffer: fnamemodify('/test/tmp/scratch-file-%d', ':p'),
+    \ when_file_buffer: fnamemodify('./test/tmp/scratch-file-%d', ':p'),
   \ }
 
   ScratchBufferOpen
@@ -251,3 +233,46 @@ function! s:suite.ScratchBufferOpenNext_should_create_different_buffers() abort
   const persistent_file = expand('%:p')
   call s:expect(tmp_file).not.to_equal(persistent_file)
 endfunction
+
+function! s:is_current_buffer_type_tmp() abort
+  return &buftype ==# 'nofile' && &bufhidden ==# 'hide'
+endfunction
+
+function! s:is_current_buffer_type_file() abort
+  return &buftype ==# '' && &bufhidden ==# ''
+endfunction
+
+function! s:suite.ScratchBufferOpenFile_should_change_the_previous_buffer_type_of_the_tmp_buffer_to_file_buffer_if_file_pattern_is_same() abort
+  const file_pattern = fnamemodify('./test/tmp/scratch-%d', ':p')
+  let g:scratch_buffer_file_pattern = #{
+    \ when_tmp_buffer: file_pattern,
+    \ when_file_buffer: file_pattern,
+  \ }
+
+  ScratchBufferOpen
+  const first_file = expand('%:p')
+
+  ScratchBufferOpenFile
+  const second_file = expand('%:p')
+
+  call s:expect(first_file).to_equal(second_file)
+  call s:expect(s:is_current_buffer_type_file()).to_be_same(1)
+endfunction
+
+function! s:suite.ScratchBufferOpen_should_change_the_buffer_type_of_the_previous_file_buffer_to_tmp_buffer_if_file_pattern_is_same() abort
+  const file_pattern = fnamemodify('./test/tmp/scratch-%d', ':p')
+  let g:scratch_buffer_file_pattern = #{
+    \ when_tmp_buffer: file_pattern,
+    \ when_file_buffer: file_pattern,
+  \ }
+
+  ScratchBufferOpenFile
+  const first_file = expand('%:p')
+
+  ScratchBufferOpen
+  const second_file = expand('%:p')
+
+  call s:expect(first_file).to_equal(second_file)
+  call s:expect(s:is_current_buffer_type_tmp()).to_be_same(1)
+endfunction
+
