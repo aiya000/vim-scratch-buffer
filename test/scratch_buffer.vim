@@ -202,22 +202,24 @@ endfunction
 function! s:suite.ScratchBufferOpen_should_use_when_tmp_buffer_pattern() abort
   let g:scratch_buffer_file_pattern = #{
     \ when_tmp_buffer: fnamemodify('./test/tmp/scratch-tmp-%d', ':p'),
+    \ when_file_buffer: 'not specified',
   \ }
 
   ScratchBufferOpen
   const file_name = expand('%:p')
-  const expected = printf(g:scratch_buffer_file_pattern.when_tmp_buffer, 0)
+  const expected = printf(g:scratch_buffer_file_pattern.when_tmp_buffer, 0) .. '.md'
   call s:expect(file_name).to_equal(expected)
 endfunction
 
 function! s:suite.ScratchBufferOpenFile_should_use_when_file_buffer_pattern() abort
   let g:scratch_buffer_file_pattern = #{
+    \ when_tmp_buffer: 'not specified',
     \ when_file_buffer: fnamemodify('./test/tmp/scratch-file-%d', ':p'),
   \ }
 
   ScratchBufferOpenFile
   const file_name = expand('%:p')
-  const expected = printf(g:scratch_buffer_file_pattern.when_file_buffer, 0)
+  const expected = printf(g:scratch_buffer_file_pattern.when_file_buffer, 0) .. '.md'
   call s:expect(file_name).to_equal(expected)
 endfunction
 
