@@ -1,21 +1,10 @@
-scriptencoding utf-8
-scriptversion 3
-
-function! s:is_scratch_buffer() abort
-  return expand('%:p') =~# substitute(g:scratch_buffer_tmp_file_pattern, '%d', '*', '')
-endfunction
-
-function! scratch_buffer#autocmd#save_file_buffer() abort
-  if g:scratch_buffer_auto_save_file_buffer && (&buftype !=# 'nofile') && s:is_scratch_buffer()
-    silent! write
+function! scratch_buffer#autocmd#save_file_buffer_if_enabled() abort
+  if g:scratch_buffer_auto_save_file_buffer && (&buftype !=# 'nofile')
+    silent write
   endif
 endfunction
 
-function! scratch_buffer#autocmd#hide_buffer() abort
-  if !s:is_scratch_buffer()
-    return
-  endif
-
+function! scratch_buffer#autocmd#hide_buffer_if_enabled() abort
   if (&buftype ==# 'nofile') && g:scratch_buffer_auto_hide_buffer.when_tmp_buffer
     quit
     return

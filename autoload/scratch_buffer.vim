@@ -1,6 +1,3 @@
-scriptencoding utf-8
-scriptversion 3
-
 " Params:
 " - (first argument) {string | undefined} (Optional)
 "     - File extension without '.', e.g., 'md', 'ts', or 'sh'
@@ -10,7 +7,7 @@ scriptversion 3
 " - (third argument) {number | undefined} (Optional) A positive number to `:resize buffer_size`
 function! scratch_buffer#open(opening_next_fresh_buffer, ...) abort
   return s:open_buffer(#{
-    \ opening_temporary_buffer: v:true,
+    \ opening_as_tmp_buffer: v:true,
     \ opening_next_fresh_buffer: a:opening_next_fresh_buffer,
     \ args: a:000,
   \ })
@@ -18,21 +15,43 @@ endfunction
 
 function! scratch_buffer#open_file(opening_next_fresh_buffer, ...) abort
   return s:open_buffer(#{
-    \ opening_temporary_buffer: v:false,
+    \ opening_as_tmp_buffer: v:false,
     \ opening_next_fresh_buffer: a:opening_next_fresh_buffer,
     \ args: a:000,
   \ })
 endfunction
 
+" Initialize augroup in case options were updated
+function! scratch_buffer#initialize_augroup() abort
+  augroup VimScratchBuffer
+    autocmd!
+    execute
+      \ 'autocmd'
+      \ 'TextChanged'
+      \ substitute(g:scratch_buffer_file_pattern.when_file_buffer, '%d', '*', '')
+      \ 'call scratch_buffer#autocmd#save_file_buffer_if_enabled()'
+    execute
+      \ 'autocmd'
+      \ 'WinLeave'
+      \ substitute(g:scratch_buffer_file_pattern.when_tmp_buffer, '%d', '*', '')
+      \ 'call scratch_buffer#autocmd#hide_buffer_if_enabled()'
+    execute
+      \ 'autocmd'
+      \ 'WinLeave'
+      \ substitute(g:scratch_buffer_file_pattern.when_file_buffer, '%d', '*', '')
+      \ 'call scratch_buffer#autocmd#hide_buffer_if_enabled()'
+  augroup END
+endfunction
+
 function! s:open_buffer(options) abort
   const args = a:options.args
-  const opening_temporary_buffer = a:options.opening_temporary_buffer
+  const opening_as_tmp_buffer = a:options.opening_as_tmp_buffer
   const opening_next_fresh_buffer = a:options.opening_next_fresh_buffer
 
+  call scratch_buffer#initialize_augroup()
+
   const file_ext = get(args, 0, g:scratch_buffer_default_file_ext)
-  const file_pattern = (file_ext ==# '--no-file-ext' || file_ext ==# '')
-    \ ? $'{g:scratch_buffer_tmp_file_pattern}'
-    \ : $'{g:scratch_buffer_tmp_file_pattern}.{file_ext}'
+  const file_pattern = s:get_file_pattern(opening_as_tmp_buffer, file_ext)
 
   const index = s:find_current_index(file_pattern) + (opening_next_fresh_buffer ? 1 : 0)
   const file_name = expand(printf(file_pattern, index))
@@ -42,7 +61,7 @@ function! s:open_buffer(options) abort
 
   execute 'silent' open_method file_name
 
-  if opening_temporary_buffer
+  if opening_as_tmp_buffer
     setlocal buftype=nofile
     setlocal bufhidden=hide
   else
@@ -53,6 +72,15 @@ function! s:open_buffer(options) abort
   if buffer_size !=# v:null
     execute (open_method ==# 'vsp' ? 'vertical' : '') 'resize' buffer_size
   endif
+endfunction
+
+function! s:get_file_pattern(opening_as_tmp_buffer, file_ext) abort
+  const type = a:opening_as_tmp_buffer
+    \ ? 'when_tmp_buffer'
+    \ : 'when_file_buffer'
+  return a:file_ext ==# '--no-file-ext' || a:file_ext ==# ''
+    \ ? $'{g:scratch_buffer_file_pattern[type]}'
+    \ : $'{g:scratch_buffer_file_pattern[type]}.{a:file_ext}'
 endfunction
 
 function! s:find_current_index(pattern) abort
@@ -72,23 +100,24 @@ function! s:extract_index_from_name(name, pattern) abort
   return len(matches) > 1 ? str2nr(matches[1]) : v:null
 endfunction
 
-function! s:find_next_index(pattern) abort
-  return  + 1
-endfunction
-
 " Clean up all scratch buffers and files
 function! scratch_buffer#clean() abort
-  const files = glob(
-    \ substitute(g:scratch_buffer_tmp_file_pattern, '%d', '*', ''),
+  const persistent_files = glob(
+    \ substitute(g:scratch_buffer_file_pattern.when_file_buffer, '%d', '*', ''),
     \ v:false,
     \ v:true,
   \ )
-  for file in files
-    call delete(file)
+  for persistent_file in persistent_files
+    call delete(persistent_file)
   endfor
 
+  call s:wipe_buffers(g:scratch_buffer_file_pattern.when_tmp_buffer)
+  call s:wipe_buffers(g:scratch_buffer_file_pattern.when_file_buffer)
+endfunction
+
+function! s:wipe_buffers(file_pattern) abort
   const scratch_prefix = '^' .. substitute(
-    \ g:scratch_buffer_tmp_file_pattern,
+    \ a:file_pattern,
     \ '%d',
     \ '',
     \ '',

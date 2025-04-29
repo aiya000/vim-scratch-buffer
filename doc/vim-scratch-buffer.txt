@@ -18,12 +18,12 @@ CHANGELOG			|scratch-buffer-changelog|
 ==============================================================================
 INTRODUCTION						*scratch-buffer-introduction*
 
-**No more hassle with file paths!**
+** No more hassle with file paths! **
 The fastest way to open an instant scratch buffer.
 
 Supercharge with vim-quickrun!
-Combine it with [vim-quickrun](https://github.com/thinca/vim-quickrun)
-to execute code instantly!
+Combine it with vim-quickrun (https://github.com/thinca/vim-quickrun) to
+execute code instantly!
 >
 	" Open a TypeScript buffer
 	:ScratchBufferOpen ts
@@ -34,8 +34,8 @@ to execute code instantly!
 	" ...and run it immediately!
 	:QuickRun
 <
-Please see the `scratch-buffer-usage` section
-for usage of `:ScratchBufferOpen`.
+Please see the |scratch-buffer-usage| section for usage of
+|:ScratchBufferOpen|.
 
 Newer Version:
 https://github.com/aiya000/vim-scratch-buffer
@@ -71,28 +71,71 @@ INTERFACE				*scratch-buffer-interface*
 ------------------------------------------------------------------------------
 VARIABLES						*scratch-buffer-variables*
 
-*g:scratch_buffer_tmp_file_pattern*
-	Default: `'/tmp/vim-scratch-buffer-%d'`
+*g:scratch_buffer_file_pattern*
+	Type: `{ when_tmp_buffer?: string, when_file_buffer?: string }`
 
-	When`ScratchBufferOpen`opens a scratch buffer, it will make a
-	decision based on this pattern.
-	Specifically,`printf($'/tmp/vim-scratch-buffer-%d.{ext}', count)`
-	will be opened. `ext`is the first argument of`ScratchBufferOpen`.
-	`count`is the number of currently open scratch buffers +1.
+	A dictionary specifying file patterns for different buffer types.
+	Has two keys:
+
+	.when_tmp_buffer ( Default: `'/tmp/vim-scratch-tmp-%d'` )
+		Pattern used for temporary buffers
+		created by |:ScratchBufferOpen|.
+
+	.when_file_buffer ( Default: `'/tmp/vim-scratch-file-%d'` )
+		Pattern used for persistent buffers
+		created by |:ScratchBufferOpenFile|.
+
+	Each pattern should contain '%d' which will be replaced with a number.
+	The number is determined by counting existing buffers of both types.
+	If a file extension is provided, it will be appended to the pattern.
+
+	Example:
+>
+	" Use different directories for temporary and persistent buffers
+	let g:scratch_buffer_file_pattern = #{
+	  \ when_tmp_buffer: '/tmp/scratch-tmp-%d',
+	  \ when_file_buffer: '/tmp/vim-scratch-file-%d',
+	\ }
+	" This is useful if you want to keep a file buffer directory
+	" (`~/tmp` in the above case) with `.prettier`, etc.
+
+	" You can set only one of these options and leave the other as the default value.
+	let g:scratch_buffer_file_pattern = #{
+	  \ when_file_buffer: expand('~/tmp/scratch-%d'),
+	\ }
+<
+	This options is recommended that these two keys have different values,
+	but they can also be the same.
+	In that case, the below following behavior occurs.
+>
+	let g:scratch_buffer_file_pattern = #{
+	  \ when_tmp_buffer: '/tmp/scratch-%d',
+	  \ when_file_buffer: '/tmp/scratch-%d',
+	\ }
+	" Open '/tmp/scratch-{first-number}.md' as a no file (tmp) buffer
+	:ScratchBufferOpen md
+	" !! Open '/tmp/scratch-{first-number}.md' again, but as a file (no tmp) buffer
+	:ScratchBufferOpen md
+<
+	The latter buffer type will overwrite the former as well if the order
+	is reversed.
 
 *g:scratch_buffer_default_file_ext*
+	Type: `string`
 	Default: `'md'`
 
 	The default file extension to use when opening a new scratch buffer.
 	This is used when no file extension is provided as an argument.
 
 *g:scratch_buffer_default_open_method*
+	Type: `string`
 	Default: `'sp'`
 
 	The default method to use when opening a new scratch buffer.
 	Can be either 'sp' for horizontal split or 'vsp' for vertical split.
 
 *g:scratch_buffer_default_buffer_size*
+	Type: `PositiveInt`
 	Default: `15`
 
 	The default size (height for 'sp' or width for 'vsp') of newly opened
@@ -101,12 +144,15 @@ VARIABLES						*scratch-buffer-variables*
 	Also if this is specified as `v:null`, resizing is not performed.
 
 *g:scratch_buffer_auto_save_file_buffer*
+	Type: `boolean`
 	Default: `v:true`
 
 	When enabled, file buffers (not temporary buffers) will be
 	automatically saved when their content changes.
 
 *g:scratch_buffer_auto_hide_buffer*
+	Type: `{ when_tmp_buffer?: boolean, when_file_buffer?: boolean }`
+
 	A dictionary that controls the auto-hiding behavior of scratch buffers.
 	Has the following keys:
 
@@ -130,6 +176,7 @@ VARIABLES						*scratch-buffer-variables*
 <
 
 *g:scratch_buffer_use_default_keymappings*
+	Type: `boolean`
 	Default: `v:false`
 
 	When enabled, the following default key mappings will be set:
@@ -137,6 +184,13 @@ VARIABLES						*scratch-buffer-variables*
 	nnoremap <silent> <leader>b <Cmd>ScratchBufferOpen<CR>
 	nnoremap <silent> <leader>B <Cmd>ScratchBufferOpenFile<CR>
 <
+
+*g:scratch_buffer_tmp_file_pattern*
+	Type: `string`
+	Default: 
+	Deprecated.
+	Please use |g:scratch_buffer_file_pattern| instead.
+
 
 ------------------------------------------------------------------------------
 COMMANDS					*scratch-buffer-commands*
@@ -146,7 +200,7 @@ COMMANDS					*scratch-buffer-commands*
 	Open a temporary scratch buffer with a random file name.
 
 	This opens buffers by the rule
-	described in `g:scratch_buffer_tmp_file_pattern`.
+	described in |g:scratch_buffer_file_pattern|.
 	If this command is called again, it will open the most recently used
 	scratch buffer.
 
@@ -165,32 +219,32 @@ COMMANDS					*scratch-buffer-commands*
 <
 	These settings make the buffer temporary and prevent writing to disk.
 	The buffer content remains in memory until Vim is closed or
-	`:ScratchBufferClean` is called.
+	|:ScratchBufferClean| is called.
 
 	[open-method] is an optional argument, should be `'sp'` or `'vsp'`.
 	Open the buffer on top if `'sp'`,
 	or open the buffer on the left if `'vsp'`.
-	Please also see `:split` and `:vsplit`.
-	Default value: see `g:scratch_buffer_default_open_method`
+	Please also see |:split| and |:vsplit|.
+	Default value: see |g:scratch_buffer_default_open_method|
 
 	[buffer-size] is an optional argument, should be a positive number.
-	`:ScratchBufferOpen` resizes the opened buffer upon opening,
-	or uses the value from `g:scratch_buffer_default_buffer_size`
+	|:ScratchBufferOpen| resizes the opened buffer upon opening,
+	or uses the value from |g:scratch_buffer_default_buffer_size|
 	if omitted.
 
 
 						*:ScratchBufferOpenNext*
 :ScratchBufferOpenNext [file-extension | --no-file-ext] [open-method] [buffer-size]
-	Similar to `:ScratchBufferOpen` but always creates a fresh temporary buffer
+	Similar to |:ScratchBufferOpen| but always creates a fresh temporary buffer
 	even if there are existing scratch buffers. This is useful when you want
 	to create multiple scratch buffers of the same type.
 
-	Takes the same arguments as `:ScratchBufferOpen`.
+	Takes the same arguments as |:ScratchBufferOpen|.
 
 
 						*:ScratchBufferOpenFile*
 :ScratchBufferOpenFile [file-extension | --no-file-ext] [open-method] [buffer-size]
-	Similar to `:ScratchBufferOpen` but creates a persistent buffer instead of
+	Similar to |:ScratchBufferOpen| but creates a persistent buffer instead of
 	a temporary one. Key differences:
 
 	1. The buffer is writable and changes can be saved to disk
@@ -201,17 +255,22 @@ COMMANDS					*scratch-buffer-commands*
 	This command is useful when you want to keep the content permanently
 	or need to share the file with other programs.
 
-	Takes the same arguments as `:ScratchBufferOpen`.
+	Takes the same arguments as |:ScratchBufferOpen|.
 
 	If you have a temporary buffer open and want to make it persistent,
-	you can use `:ScratchBufferOpenFile` with the same arguments - it will
+	you can use |:ScratchBufferOpenFile| with the same arguments - it will
 	use the same file path but make it writable.
+
+
+						*:ScratchBufferOpenFileNext*
+:ScratchBufferOpenFileNext [file-extension | --no-file-ext] [open-method] [buffer-size]
+	Similar to |:ScratchBufferOpenFile| and |:ScratchBufferOpenNext|.
 
 
 						*:ScratchBufferClean*
 :ScratchBufferClean
 	Delete all scratch files and buffers that
-	were opened by `:ScratchBufferOpen`.
+	were opened by |:ScratchBufferOpen|.
 
 
 ==============================================================================
@@ -233,11 +292,11 @@ scratch_buffer#open(opening-next-fresh-buffer[, file-extension | --no-file-ext][
 			Optional positive number for buffer size
 
 	Creates a temporary buffer that cannot be written to disk.
-	See `:help :ScratchBufferOpen` for more details.
+	See |:ScratchBufferOpen| for more details.
 
 						*scratch_buffer#open_file()*
 scratch_buffer#open_file(opening-next-fresh-buffer[, file-extension | --no-file-ext][, open-method][, buffer-size])
-	Function version of `:ScratchBufferOpenFile`.
+	Function version of |:ScratchBufferOpenFile|.
 
 	Parameters:
 		opening-next-fresh-buffer:
@@ -251,17 +310,22 @@ scratch_buffer#open_file(opening-next-fresh-buffer[, file-extension | --no-file-
 			Optional positive number for buffer size
 
 	Creates a persistent buffer that can be written to disk.
-	See `:help :ScratchBufferOpenFile` for more details.
+	See |:ScratchBufferOpenFile| for more details.
 
 						*scratch_buffer#clean()*
 scratch_buffer#clean()
-	Same as `:ScratchBufferClean`.
+	Same as |:ScratchBufferClean|.
 
 
 ==============================================================================
 CHANGELOG					*scratch-buffer-changelog*
 
-See https://github.com/aiya000/vim-scratch-buffer/commits/main
+Also See https://github.com/aiya000/vim-scratch-buffer/commits/main
+
+Breaking Changes:
+	- 2025-04-29:
+	  Deprecate |g:scratch_buffer_tmp_file_pattern| .
+	  Please use |g:scratch_buffer_file_pattern| instead.
 
 
 ==============================================================================
