@@ -10,11 +10,12 @@ function! s:suite.before() abort
   let g:backup_scratch_buffer_auto_save_file_buffer = g:scratch_buffer_auto_save_file_buffer
   let g:backup_scratch_buffer_use_default_keymappings = g:scratch_buffer_use_default_keymappings
   let g:backup_scratch_buffer_auto_hide_buffer = g:scratch_buffer_auto_hide_buffer
+  let g:backup_scratch_buffer_file_pattern = g:scratch_buffer_file_pattern
 endfunction
 
 function! s:suite.before_each() abort
   " Don't waste our environment
-  let g:scratch_buffer_tmp_file_pattern = system('realpath "./test/tmp/scratch-%d"')[:-2]
+  let g:scratch_buffer_tmp_file_pattern = fnamemodify('./test/tmp/scratch-%d', ':p')
   " Restore default values
   let g:scratch_buffer_default_file_ext = g:backup_scratch_buffer_default_file_ext
   let g:scratch_buffer_default_open_method = g:backup_scratch_buffer_default_open_method
@@ -206,4 +207,39 @@ function! s:suite.scratch_buffer_should_support_auto_hiding_buffer() abort
   ScratchBufferOpenFile md
   wincmd p  " Trigger WinLeave
   call s:expect(winnr('$')).to_be_same(1)
+endfunction
+
+function! s:suite.scratch_buffer_open_should_use_when_tmp_buffer_pattern() abort
+  let g:scratch_buffer_file_pattern = #{
+    \ when_tmp_buffer: fnamemodify('./test/tmp/scratch-tmp-%d', ':p'),
+  \ }
+
+  ScratchBufferOpen
+  const file_name = expand('%:p')
+  const expected = printf(g:scratch_buffer_file_pattern.when_tmp_buffer, 0)
+  call s:expect(file_name).to_equal(expected)
+endfunction
+
+function! s:suite.scratch_buffer_open_file_should_use_when_file_buffer_pattern() abort
+  let g:scratch_buffer_file_pattern = #{
+    \ when_file_buffer: fnamemodify('/test/tmp/scratch-file-%d', ':p'),
+  \ }
+
+  ScratchBufferOpenFile
+  const file_name = expand('%:p')
+  const expected = printf(g:scratch_buffer_file_pattern.when_file_buffer, 0)
+  call s:expect(file_name).to_equal(expected)
+endfunction
+
+function! s:suite.scratch_buffer_open_next_should_create_different_buffers() abort
+  let g:scratch_buffer_file_pattern = #{
+    \ when_tmp_buffer: fnamemodify('./test/tmp/scratch-tmp-%d', ':p'),
+    \ when_file_buffer: fnamemodify('/test/tmp/scratch-file-%d', ':p'),
+  \ }
+
+  ScratchBufferOpen
+  const tmp_file = expand('%:p')
+  ScratchBufferOpenFile
+  const persistent_file = expand('%:p')
+  call s:expect(tmp_file).not.to_equal(persistent_file)
 endfunction
