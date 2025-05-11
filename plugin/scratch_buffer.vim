@@ -33,11 +33,12 @@ endfunction
 
 " }}}
 
-command! -bar -nargs=* ScratchBufferOpen call scratch_buffer#open(v:false, <f-args>)
-command! -bar -nargs=* ScratchBufferOpenFile call scratch_buffer#open_file(v:false, <f-args>)
-command! -bar -nargs=* ScratchBufferOpenNext call scratch_buffer#open(v:true, <f-args>)
-command! -bar -nargs=* ScratchBufferOpenFileNext call scratch_buffer#open_file(v:true, <f-args>)
-command! -bar ScratchBufferClean call scratch_buffer#clean()
+" Denopsプラグインを使用するコマンド定義
+command! -bar -nargs=* ScratchBufferOpen call denops#request('scratch_buffer', 'open', [v:true, v:false, <f-args>])
+command! -bar -nargs=* ScratchBufferOpenFile call denops#request('scratch_buffer', 'open', [v:false, v:false, <f-args>])
+command! -bar -nargs=* ScratchBufferOpenNext call denops#request('scratch_buffer', 'open', [v:true, v:true, <f-args>])
+command! -bar -nargs=* ScratchBufferOpenFileNext call denops#request('scratch_buffer', 'open', [v:false, v:true, <f-args>])
+command! -bar ScratchBufferClean call denops#request('scratch_buffer', 'clean', [])
 
 if exists('g:scratch_buffer_tmp_file_pattern') && !exists('g:scratch_buffer_file_pattern')
   " For backward compatibility
@@ -57,7 +58,8 @@ let g:scratch_buffer_auto_hide_buffer = get(g:, 'scratch_buffer_auto_hide_buffer
 let g:scratch_buffer_auto_hide_buffer.when_tmp_buffer = get(g:scratch_buffer_auto_hide_buffer, 'when_tmp_buffer', v:false)
 let g:scratch_buffer_auto_hide_buffer.when_file_buffer = get(g:scratch_buffer_auto_hide_buffer, 'when_file_buffer', v:false)
 
-call scratch_buffer#initialize_augroup()
+" Denopsプラグインの初期化
+call denops#request('scratch_buffer', 'initialize', [])
 
 if g:scratch_buffer_use_default_keymappings
   nnoremap <silent> <leader>b <Cmd>ScratchBufferOpen<CR>

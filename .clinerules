@@ -1,3 +1,34 @@
+## vim-scratch-buffer Denops移行タスク
+
+タスクの詳細：
+- vim-scratch-bufferプラグインをDenops.vimを使用して実装し直す
+- オリジナルと同じ機能を維持しつつ、TypeScriptで書き換える
+- 既存のVimscriptからDenopsへの呼び出しに変更する
+
+実装方針：
+1. `denops/scratch_buffer/` ディレクトリに必要なTypeScriptファイルを作成
+   - `main.ts` - エントリポイント
+   - `buffer.ts` - バッファ関連のヘルパー関数
+   - `types.ts` - 型定義
+
+2. `plugin/scratch_buffer.vim` を修正して、Denopsを呼び出すように変更
+
+3. 既存の機能をTypeScriptに移植
+   - スクラッチバッファの作成（一時的なものと永続的なものの両方）
+   - バッファの管理（インデックス付け、クリーニングなど）
+   - 自動保存、自動非表示などのオプション
+
+プロジェクト構造:
+```
+autoload/ (オリジナルのVimscript実装)
+denops/scratch_buffer/ (Denops実装)
+  ├─ main.ts (エントリポイント)
+  ├─ buffer.ts (バッファ関連のヘルパー)
+  └─ types.ts (型定義)
+plugin/
+  └─ scratch_buffer.vim (コマンド定義と設定)
+```
+
 ## Coding
 
 - Use `const` instead of `let` if available
